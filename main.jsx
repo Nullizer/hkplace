@@ -6,6 +6,7 @@ var App = React.createClass({
   },
   toggleShow: function (i) {
     this.setState({ selected: this.props.data[i]})
+    this.refs.placeDesc.scrollTop = 0
   },
   render: function() {
     return (
@@ -17,7 +18,7 @@ var App = React.createClass({
             }, this)}
           </ul>
         </nav>
-        <article className="place-desc pure-u-2-5">
+        <article ref="placeDesc" className="place-desc pure-u-2-5">
         {this.state.selected.places.map(function (place, index) {
         return (
           <section className="place-section" key={index}>
