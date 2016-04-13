@@ -4,6 +4,25 @@ var App = React.createClass({
       selected: this.props.data[0]
     }
   },
+  componentDidMount: function () {
+    var firstPlace = this.state.selected.places[0]
+    this.getPos(firstPlace.pos, firstPlace.name)
+  },
+  getPos: function (pos, name) {
+    this.map = this.map || L.map('map')
+    if (this.mapMarker) {
+      this.map.removeLayer(this.mapMarker)
+    }
+    this.map.setView(pos, 13)
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18,
+      id: 'nullizer.plaome88',
+      accessToken: 'pk.eyJ1IjoibnVsbGl6ZXIiLCJhIjoiY2ltdng5amNtMDMyaHZobTR5MXl3NXB1YyJ9.DMy8LoXL_V1Vuf_AO9ZNHQ'
+    }).addTo(this.map)
+    this.mapMarker = L.marker(pos).addTo(this.map)
+    this.mapMarker.bindPopup(name).openPopup()
+  },
   toggleShow: function (i) {
     this.setState({ selected: this.props.data[i]})
     this.refs.placeDesc.scrollTop = 0
@@ -21,7 +40,7 @@ var App = React.createClass({
         <article ref="placeDesc" className="place-desc pure-u-3-5 pure-u-md-2-5">
         {this.state.selected.places.map(function (place, index) {
         return (
-          <section className="place-section" key={index}>
+          <section className="place-section" key={index} onClick={this.getPos.bind(this, place.pos, place.name)}>
             <header>
               <img className="sign" alt={place.name} src={place.sign} />
             </header>
@@ -29,10 +48,10 @@ var App = React.createClass({
             <img className="photo" alt="photo" src={place.photo} />
           </section>
         )
-        })}
+        }, this)}
         </article>
         <div className="map pure-u-md-2-5">
-          TODO: MAP
+          <div id="map"></div>
         </div>
       </div>
     )
@@ -50,6 +69,7 @@ var data = [
               '現在的列拿士地台是個行人專用通道， 也常會有游客特意前來拍攝此道路名。',
         photo: 'img/Rednaxela_Terrace.jpg',
         sign: 'img/signs/Rednaxela_Terrace.png',
+        pos: [22.280938, 114.151467],
       },
       {
         name: '磅巷 Pound Lane',
@@ -58,6 +78,7 @@ var data = [
         '因為早年翻譯人的水平有限， 又根據音譯而非理解， 出現了”磅巷” 和很多讓人啼笑的街名。',
         photo: 'img/Pound_Lane.JPG',
         sign: 'img/signs/Pound_Lane.png',
+        pos: [22.284829, 114.147654],
       }
     ]
   },
@@ -70,12 +91,14 @@ var data = [
               '然而并不是。它初期被稱為 “爪哇道”， 因為1900年間有一間 “爪哇輪船公司”而得名。 後來改名為較為文雅的渣華道。',
         photo: 'img/Java_Road.jpg',
         sign: 'img/signs/Java_Road.png',
+        pos: [22.291925, 114.198215],
       },
       {
         name: '開源道 Hoi Yuen Road',
         desc: '看英文路名就知道，此處的開源不是 open source。開源道是香港九龍東觀塘區觀塘商貿區內的一條三線單向行車道路。',
         photo: 'img/Hoi_Yuen_Road.JPG',
         sign: 'img/signs/Hoi_Yuen_Road.png',
+        pos: [22.310481, 114.224630],
       },
       {
         name: '蜆殼街 Shell street',
@@ -84,6 +107,7 @@ var data = [
               '位於大角咀和北角有兩所舊油庫, 但於1980年及1981年停用。然而每當提及或途經蜆殼街和油街，仍會讓人想起兩所油庫昔日的光輝歲月。',
         photo: 'img/shell_street.jpg',
         sign: 'img/signs/shell_street.png',
+        pos: [22.286886, 114.192234],
       }
     ]
   },
@@ -97,6 +121,7 @@ var data = [
               '所以鴨巴甸村莊的人們開始叫他們自己香港仔。 村中裡的街道像香港仔大道，香港仔海旁道都以香港仔開頭。',
         photo: 'img/Aberdeen_Main_Road.jpg',
         sign: 'img/signs/Aberdeen_Main_Road.png',
+        pos: [22.249009, 114.155687],
       },
       {
         name: '銅鑼灣 Causeway Bay',
@@ -104,6 +129,7 @@ var data = [
               '因為這個堤壩的形狀像一個破銅鑼， 所以人們稱他為 “銅鑼灣”。',
         photo: 'img/causeway_bay.JPG',
         sign: 'img/signs/causeway_bay.png',
+        pos: [22.278576, 114.182538],
       }
     ]
   },
@@ -117,6 +143,7 @@ var data = [
               '所以他命名這個地方蘭桂坊。還有一種說法，在這個街區，有好多賣蘭花和桂花的商鋪和小販。所以這個街區被命名為蘭桂坊。',
         photo: 'img/LKF.jpg',
         sign: 'img/signs/LKF.png',
+        pos: [22.280900, 114.155668],
       },
       {
         name: '調景嶺 Tiu Keng Leung',
@@ -125,6 +152,7 @@ var data = [
               '到了1950年代難民遷至該處後，香港政府由“吊頸嶺”的改稱為“調景嶺”，有“調整景況”之意。',
         photo: 'img/Tiu_Keng_Leng.jpg',
         sign: 'img/signs/Tiu_Keng_Leng.png',
+        pos: [22.304294, 114.252814],
       },
       {
         name: '將軍澳 Junk Bay/Tseung Kwan O',
@@ -134,6 +162,7 @@ var data = [
               '還有個說法， 在明朝時候某位將軍敗走到今將軍澳現址，最後傷重死去。後人為紀念這位將軍，除在原地安葬該將軍外，還把安葬地稱作“將軍澳”以作紀念。',
         photo: 'img/Tseung_Kwan_O.jpg',
         sign: 'img/signs/Tseung_Kwan_O.png',
+        pos: [22.307756, 114.260925],
       }
     ]
   },
@@ -148,6 +177,7 @@ var data = [
               '而香港的士美菲路過去也有牛房，臨時市場。 這條士美菲路就像英國人表達鄉思一樣， 把鄉愁都給予在了這條街。',
         photo: 'img/Smithfield.jpg',
         sign: 'img/signs/Smithfield.png',
+        pos: [22.280550, 114.129139],
       }
     ]
   },
