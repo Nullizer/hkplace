@@ -11,14 +11,14 @@ var App = React.createClass({
   render: function() {
     return (
       <div className="app pure-g">
-        <nav className="nav pure-u-1-5">
+        <nav className="nav pure-u-2-5 pure-u-md-1-5">
           <ul>
             {this.props.data.map(function (cateData, index) {
             return <li key={index}><button className="pure-button" onClick={this.toggleShow.bind(this, index)}>{cateData.title}</button></li>
             }, this)}
           </ul>
         </nav>
-        <article ref="placeDesc" className="place-desc pure-u-2-5">
+        <article ref="placeDesc" className="place-desc pure-u-3-5 pure-u-md-2-5">
         {this.state.selected.places.map(function (place, index) {
         return (
           <section className="place-section" key={index}>
@@ -31,7 +31,7 @@ var App = React.createClass({
         )
         })}
         </article>
-        <div className="map pure-u-2-5">
+        <div className="map pure-u-md-2-5">
           TODO: MAP
         </div>
       </div>
