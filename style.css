@@ -1,0 +1,49 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+  font-family: "Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft Yahei",sans-serif;
+  background: #f2f2f2;
+}
+.place-section {
+  margin-bottom: 30px;
+}
+.desc {
+  margin-top: 0px;
+}
+.sign{
+  max-width: 200px;
+}
+.photo {
+  max-width: 300px;
+}
+ul {
+  padding-left: 0;
+}
+li {
+  list-style: none;
+  margin-bottom: 1rem;
+}
+main {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+main > h1 {
+  text-align: center;
+}
+.app {
+}
+.nav {
+
+}
+.place-desc {
+  max-height: 600px;
+  overflow-y: scroll;
+}
+.map {
+
+}
