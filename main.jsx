@@ -1,57 +1,88 @@
 var App = React.createClass({
   getInitialState: function () {
     return {
-      selected: this.props.data[0]
+      selected: this.props.data[0],
+      index: 0
     }
   },
   componentDidMount: function () {
-    var firstPlace = this.state.selected.places[0]
-    this.getPos(firstPlace.pos, firstPlace.name)
+    this.initMap()
+    this.setMarkers(this.state.selected.places)
   },
-  getPos: function (pos, name) {
+  initMap: function () {
     this.map = this.map || L.map('map')
-    if (this.mapMarker) {
-      this.map.removeLayer(this.mapMarker)
-    }
-    this.map.setView(pos, 13)
+    this.map.setView([22.286886, 114.192234], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18,
       id: 'nullizer.plaome88',
       accessToken: 'pk.eyJ1IjoibnVsbGl6ZXIiLCJhIjoiY2ltdng5amNtMDMyaHZobTR5MXl3NXB1YyJ9.DMy8LoXL_V1Vuf_AO9ZNHQ'
     }).addTo(this.map)
-    this.mapMarker = L.marker(pos).addTo(this.map)
-    this.mapMarker.bindPopup(name).openPopup()
   },
   toggleShow: function (i) {
-    this.setState({ selected: this.props.data[i]})
+    this.setState({ selected: this.props.data[i], index: i })
     this.refs.placeDesc.scrollTop = 0
+    this.setMarkers(this.props.data[i].places)
+  },
+  setMarkers: function (places) {
+    this.map = this.map || L.map('map')
+    if (this.markers) {
+      this.markers.forEach(function (marker) {
+        this.map.removeLayer(marker)
+      }, this)
+    }
+    places.forEach(function (place, index) {
+      var marker = L.marker(place.pos).addTo(this.map)
+      marker.bindPopup(place.name)
+      if (index === 0) {
+        marker.openPopup()
+      }
+      this.markers = this.markers || []
+      this.markers.push(marker)
+    }, this)
   },
   render: function() {
     return (
-      <div className="app pure-g">
-        <nav className="nav pure-u-2-5 pure-u-md-1-5">
-          <ul>
+      <div className="app">
+        <nav className="nav pure-menu pure-menu-horizontal">
+          <ul className="pure-menu-list">
             {this.props.data.map(function (cateData, index) {
-            return <li key={index}><button className="pure-button" onClick={this.toggleShow.bind(this, index)}>{cateData.title}</button></li>
+              var active = index === this.state.index ? 'pure-button-active' : ''
+              return <li className="pure-menu-item " key={index}><button className={"pure-button " + active} onClick={this.toggleShow.bind(this, index)}>{cateData.title}</button></li>
             }, this)}
           </ul>
         </nav>
-        <article ref="placeDesc" className="place-desc pure-u-3-5 pure-u-md-2-5">
-        {this.state.selected.places.map(function (place, index) {
-        return (
-          <section className="place-section" key={index} onClick={this.getPos.bind(this, place.pos, place.name)}>
-            <header>
-              <img className="sign" alt={place.name} src={place.sign} />
-            </header>
-            <p className="desc">{place.desc}</p>
-            <img className="photo" alt="photo" src={place.photo} />
-          </section>
-        )
-        }, this)}
-        </article>
-        <div className="map pure-u-md-2-5">
-          <div id="map"></div>
+        <div className="pure-g content">
+          <article ref="placeDesc" className="place-desc pure-u-1-1 pure-u-md-1-2">
+          {this.state.selected.places.map(function (place, index) {
+          return (
+            <section className="place-section part-places" key={index}>
+              <header>
+                <img className="sign pure-img" alt={place.name} src={place.sign} />
+              </header>
+              <p className="desc">{place.desc}</p>
+              <img className="photo pure-img" alt="photo" src={place.photo} />
+            </section>
+          )
+          }, this)}
+          {this.props.data.map(function (cateData, index) {
+            return cateData.places.map(function (place, index2) {
+              var key = index * 10 + index2
+              return (
+                <section className="place-section all-places" key={key}>
+                  <header>
+                    <img className="sign pure-img" alt={place.name} src={place.sign} />
+                  </header>
+                  <p className="desc">{place.desc}</p>
+                  <img className="photo pure-img" alt="photo" src={place.photo} />
+                </section>
+              )
+            }, this)
+          }, this)}
+          </article>
+          <div className="map pure-u-md-1-2">
+            <div id="map"></div>
+          </div>
         </div>
       </div>
     )
